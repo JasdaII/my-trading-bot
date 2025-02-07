@@ -97,7 +97,7 @@ def get_trade_info():
                         position = {
                             'amount': currency_balance,
                             'entry_price': price,  # 記錄開倉時的價格
-                            'target_price':price * 1.025,
+                            'target_price':price * 1.03,
                             'timestamp': datetime.now().timestamp() * 1000,  # 時間戳
                             'current_value': currency_balance * price,
                             'profit': 0.0  # 初始收益為 0
@@ -231,7 +231,7 @@ def manage_positions(currency):
             if 'target_price' not in position or position['target_price'] is None:
                 position['target_price'] = 0.0  # 使用字符串表示未計算
             else: 
-                position['target_price'] = float(position['entry_price'])*1.025
+                position['target_price'] = float(position['entry_price'])*1.03
             if 'profit' not in position:
                 position['profit'] = 0.0
             if 'amount' not in position:

@@ -19,7 +19,7 @@ def calculate_target_price(currency, entry_price):
             return None
         
         # 計算止盈價格（漲幅 ≥ 2.5%）
-        target_price = entry_price * 1.025  # 2.5% 漲幅
+        target_price = entry_price * 1.03  # 3% 漲幅
         logging.info(f"{currency} 的止盈價格設定為: {target_price:.4f}")
         
         return target_price
