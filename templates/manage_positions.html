@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理倉位 - {{ currency }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <h1>管理倉位 - {{ currency }}</h1>
+    <div class="position-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>倉位編號</th>
+                    <th>倉位買入價格</th>
+                    <th>預設賣出價格</th>
+                    <th>持倉量</th>
+                    <th>收益</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position in positions %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ position['entry_price']|default(0)|round(4) }}</td>
+    <td>{{ position['target_price']|default(0)|round(4)  }}</td>
+    <td>{{ position['amount']|default(0)|round(4) }}</td>
+    <td>{{ position['profit']|default(0)|round(2) }}</td>
+</tr>
+{% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="summary">
+        <p>總單位數: {{ positions|sum(attribute='amount')|default(0)|round(4) }}</p>
+        <p>總收益: {{ positions|sum(attribute='profit')|default(0)|round(2) }}</p>
+        <p>再平衡次數: {{ trade_info[currency].rebalance_count }}</p>
+        <p>最後再平衡: {{ trade_info[currency].last_rebalance_time.strftime('%Y-%m-%d %H:%M:%S') if trade_info[currency].last_rebalance_time else '尚未執行' }}</p>
+    </div>
+    <button onclick="closeAllPositions('{{ currency }}')" class="button-manage">關閉交易</button>
+    <a href="/" class="back-btn">返回首頁</a>
+
+    <script>
+        // 關閉所有倉位
+        function closeAllPositions(currency) {
+            if (confirm('確定要關閉所有交易並賣出所有倉位嗎？')) {
+                fetch(`/api/close_all_positions/${currency}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('所有倉位已成功賣出');
+                        window.location.href = '/';  // 返回首頁
+                    } else {
+                        alert(`關閉交易失敗: ${data.error || '未知錯誤'}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('關閉交易失敗:', error);
+                    alert('關閉交易失敗，請稍後再試');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
